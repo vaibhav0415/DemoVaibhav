@@ -1,0 +1,552 @@
+#find all leaf nodes 
+import java.util.*;
+public class Main{
+    public static void main(String[] args){
+        Scanner sc=new Scanner(System.in);
+        ArrayList<Integer> ar=new ArrayList<>();
+        while(sc.hasNextInt()){
+              ar.add(sc.nextInt());
+        }
+        BT bt=new BT(ar);
+        bt.leaf();
+    }
+}
+class BT{
+    class Node{
+        int val;
+        Node left;
+        Node right;
+        Node(int val){
+            this.val=val;
+        }
+    }
+    Node root;
+    void leaf(){
+        leaf(this.root);
+    }
+    private void leaf(Node root) {
+        if (root == null) return;
+        if (root.left == null && root.right == null) {
+            System.out.print(root.val+ " ");
+            return;
+        }
+        if (root.left != null) leaf(root.left);
+        if (root.right != null) leaf(root.right);
+    }
+    BT(ArrayList<Integer> ar){
+            Queue<Node> q=new LinkedList<>();
+            this.root=construct(ar,0,q);
+    }
+    Node construct(ArrayList<Integer> ar,int i,Queue<Node>q){
+        if(i>=ar.size() ||  ar.get(i)==-1) return null;
+        Node temp=new Node(ar.get(i));
+        q.add(temp);
+        while(q.size()>0){
+            Node curr=q.poll();
+            i++;
+            if(i<ar.size() && ar.get(i)!=-1){
+                curr.left=new Node(ar.get(i));
+                q.add(curr.left);
+            
+            }
+            i++;
+            if(i<ar.size() && ar.get(i)!=-1){
+                curr.right=new Node(ar.get(i));
+                q.add(curr.right);
+                
+            }
+            
+        }
+        return temp;
+
+    }
+
+}
+#create tree 
+import java.util.*;
+public class Main {
+
+	static Scanner scn = new Scanner(System.in);
+
+	public static void main(String[] args) {
+		Main m = new Main();
+		int[] pre = takeInput();
+		int[] in = takeInput();
+		BinaryTree bt = m.new BinaryTree(pre, in);
+		bt.display();
+	}
+
+	public static int[] takeInput() {
+		int n = scn.nextInt();
+
+		int[] rv = new int[n];
+		for (int i = 0; i < rv.length; i++) {
+			rv[i] = scn.nextInt();
+		}
+
+		return rv;
+	}
+
+	private class BinaryTree {
+		private class Node {
+			int data;
+			Node left;
+			Node right;
+			public Node(int data){
+                 this.data=data;
+			}
+		}
+
+		private Node root;
+		private int size;
+
+		public BinaryTree(int[] pre, int[] in) {
+			Map<Integer,Integer> map=new HashMap<>();
+			for(int i=0;i<in.length;i++){
+				map.put(in[i],i);
+			}
+			this.root = this.construct(pre, 0, pre.length - 1, in, 0, in.length - 1,map);
+		}
+       
+		private Node construct(int[] pre, int plo, int phi, int[] in, int ilo, int ihi,Map<Integer,Integer> map) {
+
+			// write your code here
+			if(ilo>ihi || plo>phi) return null;
+			Node root=new Node(pre[plo]);
+			int i=map.get(root.data);
+			int left=i-ilo;
+			root.left=construct(pre,plo+1,plo+left,in,ilo,i-1,map);
+			root.right=construct(pre,plo+left+1,phi,in,i+1,ihi,map);
+			return root;
+		}
+
+		public void display() {
+			this.display(this.root);
+		}
+
+		private void display(Node node) {
+			if (node == null) {
+				return;
+			}
+
+			String str = "";
+
+			if (node.left != null) {
+				str += node.left.data;
+			} else {
+				str += "END";
+			}
+
+			str += " => " + node.data + " <= ";
+
+			if (node.right != null) {
+				str += node.right.data;
+			} else {
+				str += "END";
+			}
+
+			System.out.println(str);
+
+			this.display(node.left);
+			this.display(node.right);
+		}
+
+	}
+
+}
+#lca of bst 
+import java.util.Scanner;
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) {
+        val = x;
+    }
+}
+public class Main{
+    private TreeNode root;
+    private TreeNode insert(TreeNode node, int val) {
+        if (node == null) {
+            return new TreeNode(val);
+        }
+        if (val < node.val) {
+            node.left = insert(node.left, val);
+        } else {
+            node.right = insert(node.right, val);
+        }
+        return node;
+    }
+
+    public TreeNode findLCA(TreeNode node, int p, int q) {
+        if (node == null) {
+            return null;
+        }
+        if (node.val > p && node.val > q) {
+            return findLCA(node.left, p, q);
+        } else if (node.val < p && node.val < q) {
+            return findLCA(node.right, p, q);
+        } else {
+            return node;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();  
+        Main bst = new Main();
+        
+        for (int i = 0; i < n; i++) {
+            int value = sc.nextInt();
+            bst.root = bst.insert(bst.root, value);
+        }
+        int p = sc.nextInt();
+        int q = sc.nextInt();
+        TreeNode lca = bst.findLCA(bst.root, p, q);
+        System.out.println(lca.val);
+    }
+}
+#right side view 
+import java.util.LinkedList;  
+import java.util.Queue;  
+import java.util.Scanner;  
+
+class TreeNode {  
+    int val;  
+    TreeNode left;  
+    TreeNode right;  
+    TreeNode(int x) { val = x; }  
+}  
+
+public class Main{  
+    public static void main(String[] args) {  
+        Scanner sc = new Scanner(System.in);  
+        String input = sc.nextLine();  
+        String[] values = input.split(" ");  
+        TreeNode root = buildTree(values);  
+        print(root);  
+    }  
+
+    private static TreeNode buildTree(String[] values) {  
+        if (values.length == 0 || values[0].equals("-1")) return null;  
+        TreeNode root = new TreeNode(Integer.parseInt(values[0]));  
+        Queue<TreeNode> queue = new LinkedList<>();  
+        queue.add(root);  
+
+        int i = 1;  
+        while (!queue.isEmpty() && i < values.length) {  
+            TreeNode current = queue.poll();  
+            if (!values[i].equals("-1")) {  
+                current.left = new TreeNode(Integer.parseInt(values[i]));  
+                queue.add(current.left);  
+            }  
+            i++;  
+            if (i >= values.length) break;  
+            if (!values[i].equals("-1")) {  
+                current.right = new TreeNode(Integer.parseInt(values[i]));  
+                queue.add(current.right);  
+            }  
+            i++;  
+        }  
+        return root;  
+    }  
+
+    private static void print(TreeNode root) {  
+        if (root == null) return;  
+
+        Queue<TreeNode> q = new LinkedList<>();  
+        q.add(root);  
+        StringBuilder rightView = new StringBuilder();  
+
+        while (q.size()>0) {  
+            int l = q.size();  
+            for (int i = 0; i < l; i++) {  
+                TreeNode curr = q.poll();  
+                if (i == l - 1) { 
+                    rightView.append(curr.val).append(" ");  
+                }  
+                if (curr.left != null) q.add(curr.left);  
+                if (curr.right != null) q.add(curr.right);  
+            }  
+        }  
+        System.out.println(rightView.toString());  
+    }  
+}
+#replace with sum 
+import java.util.*;
+
+ class Main{
+    private class Node {
+        int data;
+        Node left;
+        Node right;
+
+        Node(int data, Node left, Node right) {
+            this.data = data;
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    private Node root;
+    private int size;
+
+    public Main() {
+        this.root = null;
+        this.size = 0;
+    }
+
+    public void add(int data) {
+        if (this.isEmpty()) {
+            this.root = new Node(data, null, null);
+            this.size++;
+        } else {
+            this.add(this.root, data);
+        }
+    }
+
+    private void add(Node node, int data) {
+        if (data > node.data) {
+            if (node.right != null) {
+                this.add(node.right, data);
+            } else {
+                this.size++;
+                node.right = new Node(data, null, null);
+            }
+        } else if (data < node.data) {
+            if (node.left != null) {
+                this.add(node.left, data);
+            } else {
+                this.size++;
+                node.left = new Node(data, null, null);
+            }
+        } else {
+            // nothing to do
+        }
+    }
+
+    public void remove(int data) {
+        this.root = this.remove(this.root, data);
+    }
+
+    private Node remove(Node node, int data) {
+        if (node == null) {
+            return null;
+        }
+
+        if (data > node.data) {
+            node.right = this.remove(node.right, data);
+            return node;
+        } else if (data < node.data) {
+            node.left = this.remove(node.left, data);
+            return node;
+        } else {
+            // found the element
+            if (node.left == null && node.right == null) {
+                this.size--;
+                return null;
+            } else if (node.left == null) {
+                this.size--;
+                return node.right;
+            } else if (node.right == null) {
+                this.size--;
+                return node.left;
+            } else {
+                // both children
+                int lmax = this.max(node.left);
+                node.data = lmax;
+                node.left = this.remove(node.left, lmax);
+
+                return node;
+            }
+        }
+    }
+
+    public int size() {
+        return this.size;
+    }
+
+    public boolean isEmpty() {
+        return this.size() == 0;
+    }
+
+    public void display() {
+        System.out.println(this);
+    }
+
+    public int max() {
+        return this.max(this.root);
+    }
+
+    private int max(Node node) {
+        int rv = node.data;
+
+        if (node.right != null) {
+            rv = this.max(node.right);
+        }
+
+        return rv;
+    }
+
+    @Override
+    public String toString() {
+        return this.toString(this.root);
+    }
+
+    private String toString(Node node) {
+        if (node == null) {
+            return "";
+        }
+
+        String retVal = "";
+
+        if (node.left != null) {
+            retVal += node.left.data + " => ";
+        } else {
+            retVal += "END" + " => ";
+        }
+
+        retVal += node.data;
+
+        if (node.right != null) {
+            retVal += " <= " + node.right.data;
+        } else {
+            retVal += " <= " + "END";
+        }
+
+        retVal += "\n";
+
+        retVal += this.toString(node.left);
+        retVal += this.toString(node.right);
+
+        return retVal;
+    }
+
+    public void replaceWLS() {
+        replaceWLS(this.root);
+    }
+   int sum=0;
+    private void replaceWLS(Node node) {
+        if (node == null) {
+            return ;
+        }
+
+    
+        replaceWLS(node.right);
+
+        
+        sum+=node.data;
+        node.data=sum-node.data;
+
+        
+        replaceWLS(node.left);
+    }
+
+    public static void main(String[] args) {
+        Main b1 = new Main();
+        Scanner scn = new Scanner(System.in);
+        int n = scn.nextInt();
+        while (n != 0) {
+            int m = scn.nextInt();
+            b1.add(m);
+            --n;
+        }
+        b1.replaceWLS();
+        System.out.println(b1);
+    }
+}
+#post AND IN 
+import java.util.*;
+public class Main {
+
+	static Scanner scn = new Scanner(System.in);
+
+	public static void main(String[] args) {
+		Main m = new Main();
+		int[] post = takeInput();
+		int[] in = takeInput();
+		BinaryTree bt = m.new BinaryTree(post, in);
+		bt.display();
+	}
+
+	public static int[] takeInput() {
+		int n = scn.nextInt();
+
+		int[] rv = new int[n];
+		for (int i = 0; i < rv.length; i++) {
+			rv[i] = scn.nextInt();
+		}
+
+		return rv;
+	}
+
+	private class BinaryTree {
+		private class Node {
+			int data;
+			Node left;
+			Node right;
+			Node(int data){
+				this.data = data;
+				left = right= null;
+			}
+
+		}
+
+		private Node root;
+		private int size;
+
+		public BinaryTree(int[] post, int[] in) {
+			this.root = this.construct(post, 0, post.length - 1, in, 0, in.length - 1);
+		}
+
+		private Node construct(int[] post, int plo, int phi, int[] in, int ilo, int ihi) {
+
+			 if(ilo>ihi) return null;
+                    Node root=new Node(post[phi]);
+                    if(plo==phi) return root;
+                    int i=ilo;
+                    while(i<=ihi){
+                        if(in[i]==post[phi]) break;
+                        i++;
+                    }
+                    int leftCount=i-ilo;
+                    int rightCount=ihi-i;
+                    root.left=construct(post,plo,plo+leftCount-1,in,ilo,i-1);
+                    root.right=construct(post,plo+leftCount,phi-1,in,i+1,ihi);
+                    return root;
+		}
+
+		public void display() {
+			this.display(this.root);
+		}
+
+		private void display(Node node) {
+			if (node == null) {
+				return;
+			}
+
+			String str = "";
+
+			if (node.left != null) {
+				str += node.left.data;
+			} else {
+				str += "END";
+			}
+
+			str += " => " + node.data + " <= ";
+
+			if (node.right != null) {
+				str += node.right.data;
+			} else {
+				str += "END";
+			}
+
+			System.out.println(str);
+
+			this.display(node.left);
+			this.display(node.right);
+		}
+
+	}
+
+}
